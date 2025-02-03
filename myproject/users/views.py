@@ -1,42 +1,38 @@
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from django.conf import settings
-import requests
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from twilio.rest import Client
 import random
 
 otp_storage = {}  # Temporary in-memory storage for OTPs
-
-EXOTEL_SID = "cusat2"
-EXOTEL_TOKEN = "your_exotel_token"
-EXOTEL_SENDER_ID = "your_exotel_sender_id"  # Your Exotel approved sender ID
 
 @api_view(["POST"])
 def send_otp(request):
     phone_number = request.data.get("phone")
     
+    if not phone_number:
+        return Response({"error": "Phone number is required"}, status=400)
+    
+    phone_number = phone_number.strip()
+
     if not phone_number.startswith("+91"):
-        phone_number = "+91" + phone_number.lstrip("0")
+        phone_number = "+91" + phone_number.lstrip("0")  # Ensure +91
 
     otp = random.randint(100000, 999999)
     otp_storage[phone_number] = otp
 
-    # Exotel API URL
-    url = f"https://api.exotel.com/v1/Accounts/{EXOTEL_SID}/Sms/send"
-
-    payload = {
-        "From": EXOTEL_SENDER_ID,
-        "To": phone_number,
-        "Body": f"Your OTP is {otp}. Please do not share it."
-    }
-
-    response = requests.post(url, data=payload, auth=(EXOTEL_SID, EXOTEL_TOKEN))
+    try:
+        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+        message = client.messages.create(
+            body=f"Your OTP is {otp}",
+            from_=settings.TWILIO_PHONE_NUMBER,
+            to=phone_number
+        )
+        return Response({"message": "OTP sent successfully", "otp": otp})  # Include OTP for testing (remove in prod)
     
-    if response.status_code == 200:
-        return Response({"message": "OTP sent successfully"})
-    else:
-        return Response({"error": "Failed to send OTP", "details": response.json()}, status=500)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
 
 @api_view(["POST"])
 def verify_otp(request):

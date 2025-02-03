@@ -1,5 +1,6 @@
 // otp_screen.dart
 import 'package:chat_app/components/BottomRightButton.dart';
+import 'package:chat_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class OtpScreen extends StatelessWidget {
@@ -7,6 +8,7 @@ class OtpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String phoneNumber = ModalRoute.of(context)?.settings.arguments as String;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -33,8 +35,14 @@ class OtpScreen extends StatelessWidget {
             ),
             Spacer(),
             BottomRightButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/Name'); // Navigate to the OTP screen
+              onPressed: ()  {
+                final otp = _otpController.text;
+                if (otp.isNotEmpty) {
+                  verifyOtp(context,phoneNumber, otp);
+                } else {
+                  // Handle empty OTP (show an error message or snack bar)
+                  print("Please enter OTP");
+                }
               },
             ),
           ],

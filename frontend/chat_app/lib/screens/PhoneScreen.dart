@@ -10,13 +10,14 @@ class PhoneScreen extends StatelessWidget {
   String formatPhoneNumber(String phone) {
     phone = phone.trim();
     if (!phone.startsWith('+')) {
-      phone = '+$phone'; // Ensure it starts with "+"
+      phone = '+91$phone'; // Ensure it starts with "+"
     }
     return phone.replaceAll(RegExp(r'\s+|-|\(|\)'), ''); // Remove spaces & symbols
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -56,10 +57,10 @@ class PhoneScreen extends StatelessWidget {
             Spacer(),
             BottomRightButton(
               onPressed: () async {
-                String phoneNumber = '+${_phoneController.text}'; // Add country code prefix
+              String phoneNumber = formatPhoneNumber(_phoneController.text); // Use formatted version directly
                 if (phoneNumber.isNotEmpty) {
                   await sendOtp(phoneNumber); // Call the sendOtp function from the imported file
-                  Navigator.pushNamed(context, '/otp'); // Navigate to OTP screen
+                  Navigator.pushNamed(context, '/otp',arguments: phoneNumber); // Navigate to OTP screen
                 } else {
                   print("Please enter a valid phone number");
                 }

@@ -1,63 +1,42 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-FirebaseAuth auth = FirebaseAuth.instance;
-
-// 🔹 Send OTP
 Future<void> sendOtp(String phoneNumber) async {
-  await auth.verifyPhoneNumber(
-    phoneNumber: phoneNumber,
-    verificationCompleted: (PhoneAuthCredential credential) async {
-      await auth.signInWithCredential(credential);
-      print("Phone number automatically verified!");
-    },
-    verificationFailed: (FirebaseAuthException e) {
-      print("Verification Failed: ${e.message}");
-    },
-    codeSent: (String verificationId, int? resendToken) {
-      print("OTP Sent. Verification ID: $verificationId");
-      // Store this verificationId for later use
-    },
-    codeAutoRetrievalTimeout: (String verificationId) {
-      print("Auto retrieval timeout.");
-    },
-  );
-}
+  print(phoneNumber);
+  final url = Uri.parse('http://192.168.1.36:8000/api/send-otp/');
+  final headers = {'Content-Type': 'application/json'};
+  final body = jsonEncode({'phone': phoneNumber});
 
-// 🔹 Verify OTP Manually
-Future<void> verifyOtp(String verificationId, String otp) async {
   try {
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(
-      verificationId: verificationId,
-      smsCode: otp,
-    );
+    final response = await http.post(url, headers: headers, body: body);
 
-    await auth.signInWithCredential(credential);
-    print("OTP Verified Successfully!");
+    if (response.statusCode == 200) {
+      print('OTP sent successfully');
+      // Handle success (e.g., navigate to OTP verification screen)
+    } else {
+      print('Failed to send OTP: ${response.body}');
+      // Handle failure (e.g., show error message to user)
+    }
   } catch (e) {
-    print("Failed to verify OTP: ${e.toString()}");
+    print('Error sending OTP: $e');
+    // Handle error (e.g., show error message to user)
   }
 }
 
-// 🔹 Verify with Django
-Future<void> verifyWithDjango() async {
-  FirebaseAuth auth = FirebaseAuth.instance;
-  User? user = auth.currentUser;
+Future<void> verifyOtp(BuildContext context, String phoneNumber, String otp) async {
+  final response = await http.post(
+    Uri.parse('http://192.168.1.36:8000/api/verify-otp/'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'phone': phoneNumber, 'otp': otp}),
+  );
 
-  if (user != null) {
-    String? idToken = await user.getIdToken();  // Get Firebase ID token
-
-    final response = await http.post(
-      Uri.parse("http://your-django-backend.com/api/verify_firebase_token/"),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"firebase_id_token": idToken}),
-    );
-
-    if (response.statusCode == 200) {
-      print("✅ Login successful: ${response.body}");
-    } else {
-      print("❌ Login failed: ${response.body}");
-    }
+  if (response.statusCode == 200) {
+    print('OTP verified successfully');
+    // Navigate to the Name screen after success
+    Navigator.pushNamed(context, '/Name');
+  } else {
+    print('Failed to verify OTP: ${response.body}');
+    // Handle error (e.g., show error message to user)
   }
 }
