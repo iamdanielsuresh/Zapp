@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "321677675955",
+    "project_id": "zapp-71716",
+    "storage_bucket": "zapp-71716.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321677675955:android:568b453fde3e7fe235cfc6",
+        "android_client_info": {
+          "package_name": "com.company.zapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIYAxLWBYCW33B5cqiGvIXefMCIA55q-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321677675955:android:48ac3087dee1b0bd35cfc6",
+        "android_client_info": {
+          "package_name": "com.example.chat_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIYAxLWBYCW33B5cqiGvIXefMCIA55q-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
