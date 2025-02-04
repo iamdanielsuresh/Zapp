@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = 'django-insecure-6d8noc3dg%uq+o6+=d0+=yy&ebqmrbl+jyj#o8c&v159(3$(ta'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.226.219', 'localhost', '127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
@@ -24,13 +24,13 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # CORS middleware should be here
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -100,11 +100,11 @@ REST_FRAMEWORK = {
     ),
 }
 
-EXOTEL_SID = "cusat2"
-EXOTEL_API_KEY = "7e3f236a3f9409307275323af995aa0bffe09d789ffd2e9f"
-EXOTEL_API_TOKEN = "ea1dba904424642171408b65164e2113619e16b625e0a5a6"
-EXOTEL_SENDER_ID = "your_approved_sender_id"  # Example: "EXOTEL"
+TWILIO_ACCOUNT_SID = "AC6285dffec21e89056d743e5cf964e0ed"
+TWILIO_AUTH_TOKEN = "7d1c8320324bfe12dd92dede876de839"
+TWILIO_PHONE_NUMBER = "+18452534972"
+
 
 
 # CORS settings for Flutter app
-CORS_ALLOW_ALL_ORIGINS = True  # Change this to restrict origins if needed
+CORS_ALLOW_ALL_ORIGINS = True  # For development purposes; restrict in production
