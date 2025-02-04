@@ -1,8 +1,12 @@
+from rest_framework import status
 from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from twilio.rest import Client
 import random
+from django.shortcuts import get_object_or_404
+from .models import User  # Import your User model
+from .utils import generate_jwt_token  # A function to generate JWT tokens
 
 otp_storage = {}  # Temporary in-memory storage for OTPs
 
@@ -39,7 +43,22 @@ def verify_otp(request):
     phone_number = request.data.get("phone")
     otp = request.data.get("otp")
 
+    # Check if OTP is correct
     if otp_storage.get(phone_number) == int(otp):
         otp_storage.pop(phone_number)  # Remove OTP after successful verification
-        return Response({"message": "OTP verified successfully", "token": "dummy_jwt_token"})
-    return Response({"error": "Invalid OTP"}, status=400)
+        
+        # Check if the user exists in PostgreSQL
+        user = User.objects.filter(phone_number=phone_number).first()
+
+
+        if user:  # User exists, log them in
+            token = generate_jwt_token(user)  # Generate JWT token
+            return Response({"exists":True,"message": "User exists, logged in", "token": token}, status=status.HTTP_200_OK)
+
+        # User does not exist, register them
+        user = User.objects.create(phone_number=phone_number)
+        token = generate_jwt_token(user)  # Generate JWT token after registration
+
+        return Response({"exists":False,"message": "User registered successfully", "token": token}, status=status.HTTP_201_CREATED)
+    
+    return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
