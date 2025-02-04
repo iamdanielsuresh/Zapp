@@ -56,7 +56,6 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/',
       routes: {
         '/': (context) => SplashScreen(),
-        '/Name': (context) => NameScreen(),
         '/phone': (context) => PhoneScreen(),
         '/otp': (context) => OtpScreen(),
         '/contacts': (context) => ContactsScreen(),

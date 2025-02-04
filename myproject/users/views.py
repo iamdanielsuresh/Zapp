@@ -7,6 +7,8 @@ import random
 from django.shortcuts import get_object_or_404
 from .models import User  # Import your User model
 from .utils import generate_jwt_token  # A function to generate JWT tokens
+from django.core.files.base import ContentFile
+import base64
 
 otp_storage = {}  # Temporary in-memory storage for OTPs
 
@@ -62,3 +64,28 @@ def verify_otp(request):
         return Response({"exists":False,"message": "User registered successfully", "token": token}, status=status.HTTP_201_CREATED)
     
     return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+def update_user_details(request):
+    phone_number = request.data.get("phone_number")
+    
+    # Fetch user from the database
+    try:
+        user = User.objects.get(phone_number=phone_number)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Update user details
+    user.name = request.data.get("name", user.name)
+    user.email = request.data.get("email", user.email)
+    user.description = request.data.get("description", user.description)
+
+    # Handle profile image if provided
+    profile_image_base64 = request.data.get("profile_image")
+    if profile_image_base64:
+        format, imgstr = profile_image_base64.split(';base64,')
+        ext = format.split('/')[-1]
+        user.profile_image.save(f"profile_{phone_number}.{ext}", ContentFile(base64.b64decode(imgstr)), save=True)
+
+    user.save()
+    return Response({"message": "User details updated successfully"}, status=status.HTTP_200_OK)

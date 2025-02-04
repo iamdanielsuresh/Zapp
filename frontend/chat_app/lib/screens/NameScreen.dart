@@ -1,9 +1,12 @@
 import 'package:chat_app/components/BottomRightButton.dart';
+import 'package:chat_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class NameScreen extends StatefulWidget {
+  final String phoneNumber;
+  NameScreen({required this.phoneNumber});
   @override
   _NameScreenState createState() => _NameScreenState();
 }
@@ -24,6 +27,26 @@ class _NameScreenState extends State<NameScreen> {
       });
     }
   }
+
+    Future<void> _saveUserDetails() async {
+    bool success = await updateUserDetails(
+      phoneNumber: widget.phoneNumber,
+      name: _nameController.text,
+      email: _emailController.text,
+      description: _descriptionController.text,
+      image: _image,
+    );
+
+    if (success) {
+      Navigator.pushReplacementNamed(context, '/contacts'); // Navigate to Contacts Screen
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Update failed")),
+      );
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,10 +105,9 @@ class _NameScreenState extends State<NameScreen> {
                 maxLines: 3,
               ),
               SizedBox(height: 20),
-              BottomRightButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/contacts'); // Navigate to the OTP screen
-                },
+              ElevatedButton(
+                onPressed: _saveUserDetails,
+                child: Text("Save & Continue"),
               ),
             ],
           ),
