@@ -57,23 +57,23 @@ TEMPLATES = [
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
 # Database configuration
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'zapp',
-#         'USER': 'postgres',
-#         'PASSWORD': 'code293b88',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-
-
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgres://USER:PASSWORD@HOST:PORT/NAME'
-    )
-}    
-# }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'zapp',
+        'USER': 'postgres',
+        'PASSWORD': 'code293b88',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default='postgres://USER:PASSWORD@HOST:PORT/NAME'
+#     )
+# }    
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -120,6 +120,6 @@ TWILIO_PHONE_NUMBER = "+18452534972"
 CORS_ALLOW_ALL_ORIGINS = True  # For development purposes; restrict in production
 
 # Heroku settings
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATIC_URL = '/static/'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
+# STATIC_URL = '/static/'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
