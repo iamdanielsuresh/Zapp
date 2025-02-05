@@ -8,7 +8,6 @@ certifi==2025.1.31
 cffi==1.17.1
 charset-normalizer==3.4.1
 cryptography==44.0.0
-dj-database-url==2.3.0
 Django==5.1.5
 django-cors-headers==4.6.0
 django_urls==1.1.4
@@ -21,7 +20,6 @@ multidict==6.1.0
 packaging==24.2
 pillow==11.1.0
 propcache==0.2.1
-psycopg2==2.9.10
 psycopg2-binary==2.9.10
 pycparser==2.22
 PyJWT==2.10.1
@@ -29,7 +27,6 @@ python-decouple==3.8
 requests==2.32.3
 sqlparse==0.5.3
 twilio==9.4.4
-typing_extensions==4.12.2
 tzdata==2025.1
 urllib3==2.3.0
 whitenoise==6.8.2
