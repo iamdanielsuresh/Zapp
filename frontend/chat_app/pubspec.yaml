@@ -65,14 +65,14 @@ flutter:
   assets:
     - assets/fonts/
 
-  fonts:
-    - family: SF Pro
-      fonts:
-        - asset: assets/fonts/SF-Pro-Display-Regular.otf
-        - asset: assets/fonts/SF-Pro-Display-Bold.otf
-          weight: 700
-        - asset: assets/fonts/SF-Pro-Display-Semibold.otf
-          weight: 600
+  # fonts:
+  #   - family: SF Pro
+  #     fonts:
+  #       - asset: assets/fonts/SF-Pro-Display-Regular.otf
+  #       - asset: assets/fonts/SF-Pro-Display-Bold.otf
+  #         weight: 700
+  #       - asset: assets/fonts/SF-Pro-Display-Semibold.otf
+  #         weight: 600
 
 
   # The following line ensures that the Material Icons font is
