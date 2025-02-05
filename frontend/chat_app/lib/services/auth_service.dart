@@ -6,7 +6,7 @@ import 'dart:io';
 
 Future<void> sendOtp(String phoneNumber) async {
   print(phoneNumber);
-  final url = Uri.parse('http://192.168.226.219:8000/api/send-otp/');
+  final url = Uri.parse('http://localhost:8000/api/send-otp/');
   final headers = {'Content-Type': 'application/json'};
   final body = jsonEncode({'phone': phoneNumber});
 
@@ -27,26 +27,42 @@ Future<void> sendOtp(String phoneNumber) async {
 }
 
 Future<void> verifyOtp(BuildContext context, String phoneNumber, String otp) async {
-  final response = await http.post(
-    Uri.parse('http://192.168.226.219:8000/api/verify-otp/'),
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({'phone': phoneNumber, 'otp': otp}),
-  );
+  try {
+    // Add logging
+    print('Verifying OTP for phone: $phoneNumber');
+    
+    final url = Uri.parse('http://localhost:8000/api/verify-otp/'); // Fix port number
+    
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'phone': phoneNumber,
+        'otp': otp
+      }),
+    );
 
-  if (response.statusCode == 200) {
-    print('OTP verified successfully');
-    final responseData = jsonDecode(response.body);
-    if (responseData['exists'] == true) {
-      Navigator.pushReplacementNamed(context,'/contacts');
-    }else{
-      Navigator.pushReplacementNamed(context,'/contacts');
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      if (responseData['exists'] == true) {
+        Navigator.pushReplacementNamed(context,'/contacts');
+      } else {
+        Navigator.pushReplacementNamed(context,'/name');
+      }
+    } else {
+      throw HttpException('Failed to verify OTP: ${response.statusCode}');
     }
-  } else {
-    print('Failed to verify OTP: ${response.body}');
-    // Handle error (e.g., show error message to user)
+  } catch (e) {
+    print('Error verifying OTP: $e');
+    // Show error to user
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to verify OTP: $e'))
+    );
   }
 }
-
 Future<bool> updateUserDetails({
   required String phoneNumber,
   required String name,

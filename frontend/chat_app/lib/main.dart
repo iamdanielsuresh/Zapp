@@ -7,11 +7,9 @@ import 'package:chat_app/screens/NameScreen.dart';
 import 'package:chat_app/screens/OtpScreen.dart';
 import 'package:chat_app/screens/PhoneScreen.dart';
 import 'package:chat_app/components/DarkLightMode.dart'; 
-import 'package:firebase_core/firebase_core.dart';
+
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
   runApp(MyApp());
 }
 

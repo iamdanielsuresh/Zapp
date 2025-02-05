@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSContactsUsageDescription</key>
+	<string>We need access to your contacts to help you connect with friends.</string>
 	<key>CFBundleDisplayName</key>
 	<string>Chat App</string>
 	<key>CFBundleExecutable</key>
