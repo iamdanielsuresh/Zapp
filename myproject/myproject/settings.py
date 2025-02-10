@@ -1,30 +1,20 @@
 from pathlib import Path
 import dj_database_url
 import os
-<<<<<<< HEAD
-=======
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
->>>>>>> daniel
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-<<<<<<< HEAD
-# Quick-start development settings - unsuitable for production
-SECRET_KEY = 'django-insecure-6d8noc3dg%uq+o6+=d0+=yy&ebqmrbl+jyj#o8c&v159(3$(ta'
-DEBUG = True
-ALLOWED_HOSTS = ['192.168.226.219', 'localhost', '127.0.0.1', 'zap-849e3236293c.herokuapp.com']
-=======
 # Security settings
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 # Allowed hosts
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(',')
->>>>>>> daniel
 
 # Application definition
 INSTALLED_APPS = [
@@ -36,11 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-<<<<<<< HEAD
-    'users',  
-=======
     'users',
->>>>>>> daniel
     'otp'
 ]
 
@@ -80,23 +66,6 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-<<<<<<< HEAD
-        'NAME': 'zapp',
-        'USER': 'postgres',
-        'PASSWORD': 'code293b88',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-
-
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default='postgres://USER:PASSWORD@HOST:PORT/NAME'
-#     )
-# }    
-}
-
-=======
         'NAME': os.getenv("DATABASE_NAME"),
         'USER': os.getenv("DATABASE_USER"),
         'PASSWORD': os.getenv("DATABASE_PASSWORD"),
@@ -110,7 +79,6 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL:
     DATABASES["default"] = dj_database_url.config(default=DATABASE_URL)
 
->>>>>>> daniel
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -136,14 +104,11 @@ USE_TZ = True
 # Static files settings
 STATIC_URL = 'static/'
 
-<<<<<<< HEAD
-=======
 
 # Media files (for future photo sharing)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
->>>>>>> daniel
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -154,29 +119,14 @@ REST_FRAMEWORK = {
     ),
 }
 
-<<<<<<< HEAD
-TWILIO_ACCOUNT_SID = "AC6285dffec21e89056d743e5cf964e0ed"
-TWILIO_AUTH_TOKEN = "ceb1d0e434b99d9ce251586d5dba4a48"
-TWILIO_PHONE_NUMBER = "+18452534972"
-=======
 # Twilio settings
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
 
 
->>>>>>> daniel
 
 
 
 # CORS settings for Flutter app
-<<<<<<< HEAD
 CORS_ALLOW_ALL_ORIGINS = True  # For development purposes; restrict in production
-
-# Heroku settings
-# STATIC_ROOT = BASE_DIR / 'staticfiles'
-# STATIC_URL = '/static/'
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-=======
-CORS_ALLOW_ALL_ORIGINS = True  # For development purposes; restrict in production
->>>>>>> daniel
