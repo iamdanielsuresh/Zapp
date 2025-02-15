@@ -6,7 +6,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = 'django-insecure-6d8noc3dg%uq+o6+=d0+=yy&ebqmrbl+jyj#o8c&v159(3$(ta'
 DEBUG = True
-ALLOWED_HOSTS = ['192.168.226.219', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['10.0.2.2', '127.0.0.1']  # Replace with your local IP
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -19,7 +30,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'users',  
-    'otp'
+    'otp',
+    'channels',
+    'chat',
+    'daphne'
 ]
 
 MIDDLEWARE = [
@@ -101,9 +115,10 @@ REST_FRAMEWORK = {
 }
 
 TWILIO_ACCOUNT_SID = "AC6285dffec21e89056d743e5cf964e0ed"
-TWILIO_AUTH_TOKEN = "7d1c8320324bfe12dd92dede876de839"
+TWILIO_AUTH_TOKEN = "bdaa1317e17bdd927c97d3fdcc271b84"
 TWILIO_PHONE_NUMBER = "+18452534972"
 
+ASGI_APPLICATION = 'zapp.asgi.application'
 
 
 # CORS settings for Flutter app

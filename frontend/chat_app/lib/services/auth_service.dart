@@ -6,7 +6,7 @@ import 'dart:io';
 
 Future<void> sendOtp(String phoneNumber) async {
   print(phoneNumber);
-  final url = Uri.parse('http://192.168.226.219:8000/api/send-otp/');
+  final url = Uri.parse('http://10.0.2.2:8000/api/send-otp/');
   final headers = {'Content-Type': 'application/json'};
   final body = jsonEncode({'phone': phoneNumber});
 
@@ -28,7 +28,7 @@ Future<void> sendOtp(String phoneNumber) async {
 
 Future<void> verifyOtp(BuildContext context, String phoneNumber, String otp) async {
   final response = await http.post(
-    Uri.parse('http://192.168.226.219:8000/api/verify-otp/'),
+    Uri.parse('http://10.0.2.2:8000/api/verify-otp/'),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'phone': phoneNumber, 'otp': otp}),
   );
@@ -36,10 +36,11 @@ Future<void> verifyOtp(BuildContext context, String phoneNumber, String otp) asy
   if (response.statusCode == 200) {
     print('OTP verified successfully');
     final responseData = jsonDecode(response.body);
+    print(responseData);
     if (responseData['exists'] == true) {
       Navigator.pushReplacementNamed(context,'/contacts');
     }else{
-      Navigator.pushReplacementNamed(context,'/contacts');
+      Navigator.pushNamed(context, '/Name',arguments: phoneNumber);
     }
   } else {
     print('Failed to verify OTP: ${response.body}');
