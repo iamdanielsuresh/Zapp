@@ -6,14 +6,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = 'django-insecure-6d8noc3dg%uq+o6+=d0+=yy&ebqmrbl+jyj#o8c&v159(3$(ta'
 DEBUG = True
-ALLOWED_HOSTS = ['10.0.2.2', '127.0.0.1']  # Replace with your local IP
+ALLOWED_HOSTS = ['127.0.0.1','localhost']  # Replace with your local IP
 
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("localhost", 6379)],
         },
     },
 }
@@ -21,6 +21,7 @@ CHANNEL_LAYERS = {
 
 # Application definition
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -33,7 +34,6 @@ INSTALLED_APPS = [
     'otp',
     'channels',
     'chat',
-    'daphne'
 ]
 
 MIDDLEWARE = [
@@ -118,8 +118,15 @@ TWILIO_ACCOUNT_SID = "AC6285dffec21e89056d743e5cf964e0ed"
 TWILIO_AUTH_TOKEN = "bdaa1317e17bdd927c97d3fdcc271b84"
 TWILIO_PHONE_NUMBER = "+18452534972"
 
-ASGI_APPLICATION = 'zapp.asgi.application'
+ASGI_APPLICATION = 'myproject.asgi.application'
+
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000", "http://localhost:8000"]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
 
 
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None 
 # CORS settings for Flutter app
 CORS_ALLOW_ALL_ORIGINS = True  # For development purposes; restrict in production

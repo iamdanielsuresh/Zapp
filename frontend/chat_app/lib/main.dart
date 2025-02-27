@@ -1,3 +1,5 @@
+import 'package:chat_app/screens/ChatScreen.dart';
+import 'package:chat_app/screens/MessageScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/screens/SettingScreen.dart';
 import 'package:chat_app/screens/SplashScreen.dart';
@@ -53,7 +55,7 @@ class _MyAppState extends State<MyApp> {
       theme: lightTheme,  // Using lightTheme from DarkLightMode.dart
       darkTheme: darkTheme,  // Using darkTheme from DarkLightMode.dart
       themeMode: _themeMode,  // Set theme mode based on user preference
-      initialRoute: '/',
+      initialRoute: '/messages',
       routes: {
         '/': (context) => SplashScreen(),
         '/phone': (context) => PhoneScreen(),
@@ -67,6 +69,8 @@ class _MyAppState extends State<MyApp> {
             });
           },
         ),
+        '/messages': (context) => MessagesScreen(), // New MessagesScreen route
+        // '/chat': (context) => ChatScreen(), // New ChatScreen route
       },
     );
   }
