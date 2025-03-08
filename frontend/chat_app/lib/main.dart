@@ -9,16 +9,13 @@ import 'package:chat_app/screens/NameScreen.dart';
 import 'package:chat_app/screens/OtpScreen.dart';
 import 'package:chat_app/screens/PhoneScreen.dart';
 import 'package:chat_app/components/DarkLightMode.dart'; 
-import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget 
-{
+class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -69,8 +66,7 @@ class _MyAppState extends State<MyApp> {
             });
           },
         ),
-        '/messages': (context) => MessagesScreen(), // New MessagesScreen route
-        // '/chat': (context) => ChatScreen(), // New ChatScreen route
+        '/messages': (context) => MessagesScreen(userId: '14',), // New MessagesScreen route
       },
     );
   }

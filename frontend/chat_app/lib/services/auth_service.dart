@@ -6,11 +6,15 @@ import 'dart:convert';
 import 'dart:io';
 
 final FlutterSecureStorage secureStorage = FlutterSecureStorage();
-const String baseUrl = 'http://10.0.2.2:8000/api';  // Update with actual server URL
+const String baseUrl = 'http://127.0.0.1:8000/api';  // Update with actual server URL
 
 // 🔹 Store JWT token securely
 Future<void> storeJwtToken(String token) async {
   await secureStorage.write(key: 'jwt_token', value: token);
+}
+
+Future<void> storeRefreshToken(String refreshToken) async {
+  await secureStorage.write(key: 'refresh_token', value: refreshToken);
 }
 
 // 🔹 Retrieve JWT token
@@ -49,21 +53,30 @@ Future<void> verifyOtp(BuildContext context, String phoneNumber, String otp) asy
     body: jsonEncode({'phone': phoneNumber, 'otp': otp}),
   );
 
-  if (response.statusCode == 200) {
+  if (response.statusCode == 200 || response.statusCode == 201) {
     final responseData = jsonDecode(response.body);
     print('OTP verified successfully: $responseData');
 
     if (responseData.containsKey('token')) {
-      String token = responseData['token'];
+      var tokenData = responseData['token'];
 
-      // Store JWT securely
-      await storeJwtToken(token);
+      String accessToken = tokenData['access_token'];
+      String refreshToken = tokenData['refresh_token'];
+
+      await storeJwtToken(accessToken);
+      await storeRefreshToken(refreshToken);
     }
 
     if (responseData['exists'] == true) {
-      Navigator.pushReplacementNamed(context, '/contacts');
+      Navigator.pushReplacementNamed(context, '/messages');
     } else {
-      Navigator.pushNamed(context, '/Name', arguments: phoneNumber);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NameScreen(phoneNumber: phoneNumber),
+  ),
+);
+
     }
   } else {
     print('Failed to verify OTP: ${response.body}');

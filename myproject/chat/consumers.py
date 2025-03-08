@@ -13,7 +13,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
         self.channel_name = self.channel_name  # Unique channel for each WebSocket
 
-        # Store user connection
+        # Store user connection in active_users                                 
         active_users[self.user_id] = self.channel_name
 
         await self.accept()
@@ -33,6 +33,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = data.get("message")
         sender = str(data.get("sender"))  # Convert sender to string
         recipient = str(data.get("recipient"))  # Convert recipient to string
+        type = data.get("type")
 
         print(f"📩 Received message from {sender} to {recipient}: {message}")
 
@@ -46,7 +47,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {
                     "type": "chat_message",
                     "message": message,
-                    "sender": sender
+                    "sender": sender,
+                    "type": type
                 }
             )
             print(f"✅ Message sent to {recipient} via {recipient_channel}")
@@ -59,6 +61,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "message": event["message"],
             "sender": event["sender"],
+            "type": event["type"]
         }))
 
     async def send_stored_messages(self):
