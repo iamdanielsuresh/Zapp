@@ -48,20 +48,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "type": "chat_message",
                     "message": message,
                     "sender": sender,
-                    "type": type
+                    "type": type,
+                    "recipient": recipient
                 }
             )
             print(f"✅ Message sent to {recipient} via {recipient_channel}")
         else:
             # Receiver is offline, store the message in Redis
-            redis_client.rpush(f"offline_messages:{recipient}", json.dumps({"sender": sender, "message": message}))
+            redis_client.rpush(f"offline_messages:{recipient}", json.dumps({"sender": sender, "message": message,type: type, "recipient": recipient}))
             print(f"💾 Message stored in Redis for offline user {recipient}")
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps({
             "message": event["message"],
             "sender": event["sender"],
-            "type": event["type"]
+            "type": event["type"],
+            "recipient": event["recipient"]
         }))
 
     async def send_stored_messages(self):

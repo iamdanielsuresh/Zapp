@@ -1,11 +1,12 @@
-import 'dart:convert';
-import 'dart:async';
+import 'package:chat_app/components/message_service.dart';
+import 'package:chat_app/screens/ChatScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'ChatScreen.dart'; // Import the chat screen
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:chat_app/components/message_model.dart';
 
 class MessagesScreen extends StatefulWidget {
   final String userId;
+
   const MessagesScreen({Key? key, required this.userId}) : super(key: key);
 
   @override
@@ -13,152 +14,98 @@ class MessagesScreen extends StatefulWidget {
 }
 
 class _MessagesScreenState extends State<MessagesScreen> {
-  late WebSocketChannel channel;
-  Map<String, Map<String, dynamic>> latestMessages = {}; // Stores only the latest message per sender
-  bool isConnected = false;
-  Timer? reconnectTimer;
+  late Box<Message> messagesBox;
+  late MessageService messageService;
 
   @override
   void initState() {
     super.initState();
-    _connectWebSocket();
-  }
-
-  void _connectWebSocket() {
-    if (isConnected) return;
-
-    try {
-      channel = WebSocketChannel.connect(
-        Uri.parse('ws://127.0.0.1:8000/ws/chat/${widget.userId}/'),
-      );
-
-      channel!.stream.listen(
-        (message) {
-          print("📩 Received WebSocket message: $message");
-          try {
-            final data = json.decode(message);
-
-            if (data['type'] == 'chat_message') {
-              _updateLatestMessage(data);
-            }
-          } catch (e) {
-            print("❌ Error parsing WebSocket message: $e");
-          }
-        },
-        onDone: _handleDisconnection,
-        onError: (error) {
-          print("⚠️ WebSocket Error: $error");
-          _handleDisconnection();
-        },
-      );
-
-      setState(() => isConnected = true);
-    } catch (e) {
-      print("❌ WebSocket Connection Failed: $e");
-      _handleDisconnection();
-    }
-  }
-
-  void _handleDisconnection() {
-    setState(() => isConnected = false);
-    reconnectTimer?.cancel();
-    reconnectTimer = Timer(const Duration(seconds: 5), _connectWebSocket);
-  }
-
-  void _updateLatestMessage(Map<String, dynamic> data) {
-    String senderId = data['sender_id']?.toString() ?? 'unknown';
-    String senderName = data['sender'] ?? 'Unknown';
-    String lastMessage = data['message'] ?? '';
-    String timestamp = data['timestamp'] ?? DateTime.now().toIso8601String();
-    bool online = data['online'] ?? false;
-
-    if (lastMessage.isEmpty) return; // Ignore empty messages
-
-    setState(() {
-      latestMessages[senderId] = {
-        'sender_name': senderName,
-        'last_message': lastMessage,
-        'timestamp': timestamp,
-        'sender_id': senderId,
-        'online': online,
-      };
-    });
+    messagesBox = Hive.box<Message>('messages');
+    messageService = MessageService(userId: widget.userId);
   }
 
   @override
   void dispose() {
-    channel?.sink.close();
-    reconnectTimer?.cancel();
+    messageService.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> messagesList = latestMessages.values.toList();
-
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text("Messages"),
-        backgroundColor: Colors.black,
-      ),
-      body: messagesList.isEmpty
-          ? const Center(
-              child: Text(
-                "No messages available",
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            )
-          : ListView.builder(
-              itemCount: messagesList.length,
-              itemBuilder: (context, index) {
-                var message = messagesList[index];
+      appBar: AppBar(title: const Text("Messages")),
+      body: ValueListenableBuilder(
+        valueListenable: messagesBox.listenable(),
+        builder: (context, Box<Message> box, _) {
+          if (box.isEmpty) {
+            return const Center(child: Text("No messages"));
+          }
 
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    child: Text(
-                      (message['sender_name'].isNotEmpty ? message['sender_name'][0] : '?').toUpperCase(),
-                    ),
-                  ),
-                  title: Text(
-                    message['sender_name'],
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  subtitle: Text(
-                    message['last_message'],
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                  trailing: Text(
-                    _formatTimestamp(message['timestamp']),
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatScreen(
-                          senderId: message['sender_id'],
-                          senderName: message['sender_name'],
-                          userId: widget.userId,
-                          channel:channel,
+          // Keep only the latest message per sender
+          Map<String, Message> latestMessages = {};
 
-                        ),
+          for (var msg in box.values) {
+            if (msg.sender.isNotEmpty || msg.sender != widget.userId) {
+              latestMessages[msg.sender] = msg;
+            }
+          }
+
+          // Convert to list and sort by timestamp (latest first)
+          List<Message> uniqueMessages = latestMessages.values.toList()
+            ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+          return ListView.builder(
+            itemCount: uniqueMessages.length,
+            itemBuilder: (context, index) {
+              var message = uniqueMessages[index];
+
+              return ListTile(
+                leading: const CircleAvatar(child: Icon(Icons.person)),
+                title: Text(
+                  message.sender,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  message.message,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                trailing: Text(
+                  _formatTimestamp(message.timestamp),
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(
+                        senderName: message.sender,
+                        userId: widget.userId,
+                        senderId: message.sender,
                       ),
-                    );
-                  },
-                );
-              },
-            ),
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
-  String _formatTimestamp(String timestamp) {
-    try {
-      DateTime time = DateTime.parse(timestamp);
-      return "${time.hour}:${time.minute}";
-    } catch (e) {
-      return "N/A";
+  String _formatTimestamp(dynamic timestamp) {
+    int parsedTimestamp;
+
+    if (timestamp is int) {
+      parsedTimestamp = timestamp;
+    } else if (timestamp is String) {
+      parsedTimestamp = int.tryParse(timestamp) ?? 0; // Safely convert
+    } else {
+      return "Invalid Time"; // Handle unexpected values
     }
+
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(parsedTimestamp);
+    return "${date.hour}:${date.minute.toString().padLeft(2, '0')}"; // HH:MM format
   }
 }

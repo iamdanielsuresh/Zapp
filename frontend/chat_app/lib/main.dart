@@ -1,8 +1,11 @@
+import 'package:chat_app/components/message_model.dart';
 import 'package:chat_app/screens/ChatScreen.dart';
 import 'package:chat_app/screens/MessageScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/screens/SettingScreen.dart';
 import 'package:chat_app/screens/SplashScreen.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chat_app/screens/ContactScreen.dart';
 import 'package:chat_app/screens/NameScreen.dart';
@@ -12,8 +15,12 @@ import 'package:chat_app/components/DarkLightMode.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(MessageAdapter());
+  await Hive.openBox<Message>('messages');
   runApp(MyApp());
 }
+
 
 class MyApp extends StatefulWidget {
   @override
