@@ -1,3 +1,8 @@
+// http://64.227.180.175
+//if (response.statusCode == 200 || response.statusCode == 201)
+
+
+
 import 'package:chat_app/screens/NameScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -6,14 +11,14 @@ import 'dart:io';
 
 Future<void> sendOtp(String phoneNumber) async {
   print(phoneNumber);
-  final url = Uri.parse('http://localhost:8000/api/send-otp/');
+  final url = Uri.parse('http://64.227.180.175/api/send-otp/');
   final headers = {'Content-Type': 'application/json'};
   final body = jsonEncode({'phone': phoneNumber});
 
   try {
     final response = await http.post(url, headers: headers, body: body);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       print('OTP sent successfully');
       // Handle success (e.g., navigate to OTP verification screen)
     } else {
@@ -31,7 +36,7 @@ Future<void> verifyOtp(BuildContext context, String phoneNumber, String otp) asy
     // Add logging
     print('Verifying OTP for phone: $phoneNumber');
     
-    final url = Uri.parse('http://localhost:8000/api/verify-otp/'); // Fix port number
+    final url = Uri.parse('http://64.227.180.175/api/verify-otp/'); // Fix port number
     
     final response = await http.post(
       url,
@@ -45,7 +50,7 @@ Future<void> verifyOtp(BuildContext context, String phoneNumber, String otp) asy
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final responseData = jsonDecode(response.body);
       if (responseData['exists'] == true) {
         Navigator.pushReplacementNamed(context,'/contacts');
