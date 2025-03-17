@@ -117,17 +117,10 @@ Future<bool> updateUserDetails({
     base64Image = "data:image/png;base64," + base64Encode(imageBytes);
   }
 
-  String? token = await getJwtToken();
-  if (token == null) {
-    print("User not authenticated");
-    return false;
-  }
-
   final response = await http.put(
     Uri.parse("$baseUrl/update-user/"),
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
     },
     body: jsonEncode({
       "phone_number": phoneNumber,
@@ -138,10 +131,39 @@ Future<bool> updateUserDetails({
     }),
   );
 
-  return response.statusCode == 200;
+  if (response.statusCode == 200) {
+    print("✅ User updated successfully");
+    return true;
+  } else {
+    print("❌ Update failed: ${response.statusCode} - ${response.body}");
+    return false;
+  }
 }
+
 
 Future<String?> getUserId() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('user_id');
 }
+
+  // API Call: Check registered users in batch
+  Future<List<String>> fetchRegisteredUsers(List<String> phoneNumbers) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/check-users/'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"phone_numbers": phoneNumbers}),
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> registeredUsers = jsonDecode(response.body);
+        return registeredUsers.map((user) => user.toString()).toList();
+      } else {
+        print("Failed to fetch registered users: ${response.statusCode}");
+        return [];
+      }
+    } catch (e) {
+      print("Error fetching registered users: $e");
+      return [];
+    }
+  }

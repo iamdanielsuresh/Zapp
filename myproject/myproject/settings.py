@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
     'corsheaders',
     'users',  
     'otp',
@@ -130,3 +132,8 @@ CSRF_COOKIE_SECURE = False
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None 
 # CORS settings for Flutter app
 CORS_ALLOW_ALL_ORIGINS = True  # For development purposes; restrict in production
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',  # Allow Authorization headers
+]
+

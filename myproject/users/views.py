@@ -1,3 +1,4 @@
+from django.db import connection
 from rest_framework import status
 from django.conf import settings
 from rest_framework.decorators import api_view
@@ -110,3 +111,16 @@ def update_user_details(request):
 
     user.save()
     return Response({"message": "User details updated successfully"}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+def check_users(request):
+    phone_numbers = request.data.get("phone_numbers", [])
+
+    if not phone_numbers:
+        return Response({"error": "No phone numbers provided"}, status=400)
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT phone_number FROM users_user WHERE phone_number = ANY(%s)", [phone_numbers])
+        registered_users = [row[0] for row in cursor.fetchall()]
+
+    return Response(registered_users)
