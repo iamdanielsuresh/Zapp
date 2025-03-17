@@ -76,7 +76,7 @@ def verify_otp(request):
 
         if user:  # User exists, log them in
             token = generate_jwt_token(user)  # Generate JWT token
-            return Response({"exists":True,"message": "User exists, logged in", "token": token}, status=status.HTTP_200_OK)
+            return Response({"exists":True,"message": "User exists, logged in", "token": token,"user_id": user.id}, status=status.HTTP_200_OK)
 
         # User does not exist, register them
         user = User.objects.create(phone_number=phone_number)

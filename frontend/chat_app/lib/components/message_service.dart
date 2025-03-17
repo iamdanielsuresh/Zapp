@@ -35,7 +35,7 @@ class MessageService {
     try {
       print("🔌 Connecting to WebSocket...");
       channel = WebSocketChannel.connect(
-        Uri.parse('ws://192.168.1.37:8000/ws/chat/$userId/'),
+        Uri.parse('ws://192.168.1.34:8000/ws/chat/$userId/'),
       );
 
       channel.stream.listen(

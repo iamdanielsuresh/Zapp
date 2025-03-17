@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
       theme: lightTheme,  // Using lightTheme from DarkLightMode.dart
       darkTheme: darkTheme,  // Using darkTheme from DarkLightMode.dart
       themeMode: _themeMode,  // Set theme mode based on user preference
-      initialRoute: '/messages',
+      initialRoute: '/',
       routes: {
         '/': (context) => SplashScreen(),
         '/phone': (context) => PhoneScreen(),
@@ -73,7 +73,6 @@ class _MyAppState extends State<MyApp> {
             });
           },
         ),
-        '/messages': (context) => MessagesScreen(userId: '14',), // New MessagesScreen route
       },
     );
   }

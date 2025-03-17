@@ -4,9 +4,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:chat_app/screens/MessageScreen.dart';
 
 final FlutterSecureStorage secureStorage = FlutterSecureStorage();
-const String baseUrl = 'http://127.0.0.1:8000/api';  // Update with actual server URL
+const String baseUrl = 'http://192.168.1.34:8000/api';  // Update with actual server URL
 
 // 🔹 Store JWT token securely
 Future<void> storeJwtToken(String token) async {
@@ -57,26 +59,44 @@ Future<void> verifyOtp(BuildContext context, String phoneNumber, String otp) asy
     final responseData = jsonDecode(response.body);
     print('OTP verified successfully: $responseData');
 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Store tokens if they exist
     if (responseData.containsKey('token')) {
       var tokenData = responseData['token'];
-
       String accessToken = tokenData['access_token'];
       String refreshToken = tokenData['refresh_token'];
 
       await storeJwtToken(accessToken);
       await storeRefreshToken(refreshToken);
+      prefs.setString('access_token', accessToken);
+      prefs.setString('refresh_token', refreshToken);
     }
 
-    if (responseData['exists'] == true) {
-      Navigator.pushReplacementNamed(context, '/messages');
+    // ✅ Declare userId outside the if block
+    String? userId;
+
+    if (responseData.containsKey('user_id')) {
+      userId = responseData['user_id'].toString();
+      await prefs.setString('user_id', userId);
+      print("User ID saved: $userId");
+    }
+
+    // ✅ Navigate only if userId is not null
+    if (responseData['exists'] == true && userId != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MessagesScreen(userId: userId!),
+        ),
+      );
     } else {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => NameScreen(phoneNumber: phoneNumber),
-  ),
-);
-
+        ),
+      );
     }
   } else {
     print('Failed to verify OTP: ${response.body}');
@@ -119,4 +139,9 @@ Future<bool> updateUserDetails({
   );
 
   return response.statusCode == 200;
+}
+
+Future<String?> getUserId() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('user_id');
 }
