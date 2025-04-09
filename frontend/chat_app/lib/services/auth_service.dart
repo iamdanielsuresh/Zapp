@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chat_app/screens/MessageScreen.dart';
 
 final FlutterSecureStorage secureStorage = FlutterSecureStorage();
-const String baseUrl = 'http://192.168.1.34:8000/api';  // Update with actual server URL
+const String baseUrl = 'http://127.0.0.1:8000/api';  // Update with actual server URL192.168.1.36
 
 // 🔹 Store JWT token securely
 Future<void> storeJwtToken(String token) async {

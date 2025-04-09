@@ -1,0 +1,264 @@
+.
+├── .gitignore
+├── .idea
+│   ├── .gitignore
+│   ├── caches
+│   │   └── deviceStreaming.xml
+│   ├── misc.xml
+│   ├── modules.xml
+│   ├── vcs.xml
+│   ├── workspace.xml
+│   └── Zapp.iml
+├── .vscode
+│   └── settings.json
+├── frontend
+│   └── chat_app
+│       ├── .dart_tool
+│       │   ├── dartpad
+│       │   │   └── web_plugin_registrant.dart
+│       │   ├── extension_discovery
+│       │   │   ├── README.md
+│       │   │   └── vs_code.json
+│       │   ├── flutter_build
+│       │   │   ├── d206aec0ab8d6fae10ae192842e749e5
+│       │   │   └── dart_plugin_registrant.dart
+│       │   ├── package_config_subset
+│       │   ├── package_config.json
+│       │   └── version
+│       ├── .flutter-plugins
+│       ├── .flutter-plugins-dependencies
+│       ├── .gitignore
+│       ├── .metadata
+│       ├── analysis_options.yaml
+│       ├── android
+│       │   ├── .gitignore
+│       │   ├── .gradle
+│       │   │   ├── 8.3
+│       │   │   ├── buildOutputCleanup
+│       │   │   ├── file-system.probe
+│       │   │   ├── kotlin
+│       │   │   └── vcs-1
+│       │   ├── app
+│       │   │   ├── build.gradle
+│       │   │   ├── google-services.json
+│       │   │   └── src
+│       │   ├── build.gradle
+│       │   ├── gradle
+│       │   │   └── wrapper
+│       │   ├── gradle.properties
+│       │   ├── gradlew
+│       │   ├── gradlew.bat
+│       │   ├── local.properties
+│       │   └── settings.gradle
+│       ├── assets
+│       │   └── fonts
+│       ├── firebase.json
+│       ├── ios
+│       │   ├── .gitignore
+│       │   ├── .symlinks
+│       │   │   └── plugins
+│       │   ├── Flutter
+│       │   │   ├── AppFrameworkInfo.plist
+│       │   │   ├── Debug.xcconfig
+│       │   │   ├── flutter_export_environment.sh
+│       │   │   ├── Flutter.podspec
+│       │   │   ├── Generated.xcconfig
+│       │   │   └── Release.xcconfig
+│       │   ├── Podfile
+│       │   ├── Pods
+│       │   │   ├── Firebase
+│       │   │   ├── FirebaseAppCheckInterop
+│       │   │   ├── FirebaseAuth
+│       │   │   ├── FirebaseAuthInterop
+│       │   │   ├── FirebaseCore
+│       │   │   ├── FirebaseCoreExtension
+│       │   │   ├── FirebaseCoreInternal
+│       │   │   ├── GoogleUtilities
+│       │   │   ├── GTMSessionFetcher
+│       │   │   ├── Headers
+│       │   │   ├── Local Podspecs
+│       │   │   ├── Pods.xcodeproj
+│       │   │   ├── RecaptchaInterop
+│       │   │   └── Target Support Files
+│       │   ├── Runner
+│       │   │   ├── AppDelegate.swift
+│       │   │   ├── Assets.xcassets
+│       │   │   ├── Base.lproj
+│       │   │   ├── GeneratedPluginRegistrant.h
+│       │   │   ├── GeneratedPluginRegistrant.m
+│       │   │   ├── Info.plist
+│       │   │   └── Runner-Bridging-Header.h
+│       │   ├── Runner.xcodeproj
+│       │   │   ├── project.pbxproj
+│       │   │   ├── project.xcworkspace
+│       │   │   └── xcshareddata
+│       │   ├── Runner.xcworkspace
+│       │   │   ├── contents.xcworkspacedata
+│       │   │   └── xcshareddata
+│       │   └── RunnerTests
+│       │       └── RunnerTests.swift
+│       ├── lib
+│       │   ├── components
+│       │   │   ├── BottomRightButton.dart
+│       │   │   ├── ChatBubble.dart
+│       │   │   ├── DarkLightMode.dart
+│       │   │   ├── message_model.dart
+│       │   │   ├── message_model.g.dart
+│       │   │   ├── message_service.dart
+│       │   │   └── send_message_model.dart
+│       │   ├── main.dart
+│       │   ├── screens
+│       │   │   ├── ChatScreen.dart
+│       │   │   ├── ContactScreen.dart
+│       │   │   ├── MessageScreen.dart
+│       │   │   ├── NameScreen.dart
+│       │   │   ├── OtpScreen.dart
+│       │   │   ├── PhoneScreen.dart
+│       │   │   ├── SettingScreen.dart
+│       │   │   └── SplashScreen.dart
+│       │   └── services
+│       │       └── auth_service.dart
+│       ├── linux
+│       │   ├── .gitignore
+│       │   ├── CMakeLists.txt
+│       │   ├── flutter
+│       │   │   ├── CMakeLists.txt
+│       │   │   ├── ephemeral
+│       │   │   ├── generated_plugin_registrant.cc
+│       │   │   ├── generated_plugin_registrant.h
+│       │   │   └── generated_plugins.cmake
+│       │   └── runner
+│       │       ├── CMakeLists.txt
+│       │       ├── main.cc
+│       │       ├── my_application.cc
+│       │       └── my_application.h
+│       ├── macos
+│       │   ├── .gitignore
+│       │   ├── Flutter
+│       │   │   ├── ephemeral
+│       │   │   ├── Flutter-Debug.xcconfig
+│       │   │   ├── Flutter-Release.xcconfig
+│       │   │   └── GeneratedPluginRegistrant.swift
+│       │   ├── Podfile
+│       │   ├── Pods
+│       │   │   ├── Headers
+│       │   │   ├── Local Podspecs
+│       │   │   └── Target Support Files
+│       │   ├── Runner
+│       │   │   ├── AppDelegate.swift
+│       │   │   ├── Assets.xcassets
+│       │   │   ├── Base.lproj
+│       │   │   ├── Configs
+│       │   │   ├── DebugProfile.entitlements
+│       │   │   ├── Info.plist
+│       │   │   ├── MainFlutterWindow.swift
+│       │   │   └── Release.entitlements
+│       │   ├── Runner.xcodeproj
+│       │   │   ├── project.pbxproj
+│       │   │   ├── project.xcworkspace
+│       │   │   └── xcshareddata
+│       │   ├── Runner.xcworkspace
+│       │   │   ├── contents.xcworkspacedata
+│       │   │   └── xcshareddata
+│       │   └── RunnerTests
+│       │       └── RunnerTests.swift
+│       ├── pubspec.yaml
+│       ├── README.md
+│       ├── test
+│       │   └── widget_test.dart
+│       ├── web
+│       │   ├── favicon.png
+│       │   ├── icons
+│       │   │   ├── Icon-192.png
+│       │   │   ├── Icon-512.png
+│       │   │   ├── Icon-maskable-192.png
+│       │   │   └── Icon-maskable-512.png
+│       │   ├── index.html
+│       │   └── manifest.json
+│       └── windows
+│           ├── .gitignore
+│           ├── CMakeLists.txt
+│           ├── flutter
+│           │   ├── CMakeLists.txt
+│           │   ├── ephemeral
+│           │   ├── generated_plugin_registrant.cc
+│           │   ├── generated_plugin_registrant.h
+│           │   └── generated_plugins.cmake
+│           └── runner
+│               ├── CMakeLists.txt
+│               ├── flutter_window.cpp
+│               ├── flutter_window.h
+│               ├── main.cpp
+│               ├── resource.h
+│               ├── resources
+│               ├── runner.exe.manifest
+│               ├── Runner.rc
+│               ├── utils.cpp
+│               ├── utils.h
+│               ├── win32_window.cpp
+│               └── win32_window.h
+├── myproject
+│   ├── chat
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── consumers.py
+│   │   ├── middleware.py
+│   │   ├── migrations
+│   │   │   └── __init__.py
+│   │   ├── models.py
+│   │   ├── routing.py
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   └── views.py
+│   ├── db.sqlite3
+│   ├── docker-compose.yml
+│   ├── Dockerfile
+│   ├── manage.py
+│   ├── myproject
+│   │   ├── __init__.py
+│   │   ├── asgi.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   ├── otp
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   │   └── 0001_initial.py
+│   │   ├── models.py
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   └── views.py
+│   ├── profile_images
+│   │   ├── profile_911234567890.png
+│   │   ├── profile_916238285386.png
+│   │   ├── profile_918075901591.png
+│   │   ├── profile_918590353527_ALYFPfJ.png
+│   │   ├── profile_918590353527_YqoSh4z.png
+│   │   ├── profile_918590353527.png
+│   │   ├── profile_919567016819.png
+│   │   ├── profile_919847938548.png
+│   │   ├── profile_919874563210.png
+│   │   └── profile_919876543210.png
+│   └── users
+│       ├── __init__.py
+│       ├── admin.py
+│       ├── apps.py
+│       ├── migrations
+│       │   ├── __init__.py
+│       │   ├── 0001_initial.py
+│       │   ├── 0002_user_profile_picture.py
+│       │   └── 0003_remove_user_is_registered_and_more.py
+│       ├── models.py
+│       ├── tests.py
+│       ├── urls.py
+│       ├── utils.py
+│       └── views.py
+├── project_structure.txt
+├── README.md
+└── requirements.txt
+
+93 directories, 169 files

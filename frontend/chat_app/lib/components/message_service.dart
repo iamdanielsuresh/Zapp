@@ -6,7 +6,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 class MessageService {
   late WebSocketChannel channel;
-  late Box<Message> messageBox;
+  Map<String, Box<Message>> _messageBoxes = {};
   final String userId;
   bool isConnected = false;
   Timer? reconnectTimer;
@@ -16,18 +16,37 @@ class MessageService {
   }
 
   Future<void> _initialize() async {
-    await _initHive();  // Ensure Hive is ready
+    await _initHive();
     _connectWebSocket();
   }
 
   Future<void> _initHive() async {
+    // Open or get the main messages box
     if (!Hive.isBoxOpen('messages')) {
-      messageBox = await Hive.openBox<Message>('messages');
-    } else {
-      messageBox = Hive.box<Message>('messages');
+      await Hive.openBox<Message>('messages');
+    }
+    
+    // Open or get user-specific conversation boxes
+    if (!Hive.isBoxOpen('conversations_$userId')) {
+      await Hive.openBox<Message>('conversations_$userId');
     }
   }
 
+  Box<Message> _getOrCreateConversationBox(String otherUserId) {
+    // Create a consistent box name regardless of who initiated the conversation
+    List<String> ids = [userId, otherUserId];
+    ids.sort();
+    String boxName = 'conversation_${ids.join('_')}';
+    
+    if (!_messageBoxes.containsKey(boxName)) {
+      if (!Hive.isBoxOpen(boxName)) {
+        _messageBoxes[boxName] = Hive.openBox<Message>(boxName) as Box<Message>;
+      } else {
+        _messageBoxes[boxName] = Hive.box<Message>(boxName);
+      }
+    }
+    return _messageBoxes[boxName]!;
+  }
 
   void _connectWebSocket() {
     if (isConnected) return; // Prevent multiple connections
@@ -71,22 +90,17 @@ class MessageService {
   }
 
   void _storeMessage(Map<String, dynamic> data) {
-    if (!data.containsKey('message')) return;
+    final message = Message.fromJson(data);
+    final otherUserId = message.sender == userId ? message.recipient : message.sender;
+    
+    // Store in conversation-specific box
+    final conversationBox = _getOrCreateConversationBox(otherUserId);
+    conversationBox.add(message);
 
-    final message = Message(
-      sender: data['sender']?.toString() ?? 'unknown',
-      senderName: data['senderName'] ?? 'Unknown',
-      message: data['message'] ?? '',
-      timestamp: (data['timestamp']?.toString()) ?? DateTime.now().toIso8601String(), // ✅ Convert to String
-      recipient: data['recipient']?.toString() ?? '',
-    );
-  print("📤 Received message: $message");
-    if (message.recipient == userId || message.sender == userId) {
-      messageBox.add(message);
-      print("✅ Stored message in Hive");
-    }
+    // Also store in the main messages box for the messages list
+    final mainBox = Hive.box<Message>('messages');
+    mainBox.add(message);
   }
-
 
   void sendMessage(String recipientId, String senderName, String text) {
     if (!isConnected) {
@@ -115,11 +129,21 @@ class MessageService {
       recipient: recipientId,
     );
 
-    messageBox.add(message);
+    final conversationBox = _getOrCreateConversationBox(recipientId);
+    conversationBox.add(message);
+
+    final mainBox = Hive.box<Message>('messages');
+    mainBox.add(message);
+  }
+
+  Future<List<Message>> getConversationMessages(String otherUserId) async {
+    final box = _getOrCreateConversationBox(otherUserId);
+    return box.values.toList()
+      ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 
   List<Message> getLatestMessages() {
-    return messageBox.values
+    return Hive.box<Message>('messages').values
         .where((msg) => msg.sender == userId || msg.recipient == userId)
         .toList();
   }
@@ -127,5 +151,11 @@ class MessageService {
   void dispose() {
     channel.sink.close();
     reconnectTimer?.cancel();
+    // Close all opened boxes
+    _messageBoxes.values.forEach((box) {
+      if (box.isOpen) {
+        box.close();
+      }
+    });
   }
 }

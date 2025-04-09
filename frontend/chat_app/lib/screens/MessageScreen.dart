@@ -14,13 +14,11 @@ class MessagesScreen extends StatefulWidget {
 }
 
 class _MessagesScreenState extends State<MessagesScreen> {
-  late Box<Message> messagesBox;
   late MessageService messageService;
 
   @override
   void initState() {
     super.initState();
-    messagesBox = Hive.box<Message>('messages');
     messageService = MessageService(userId: widget.userId);
   }
 
@@ -35,34 +33,46 @@ class _MessagesScreenState extends State<MessagesScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text("Messages")),
       body: ValueListenableBuilder(
-        valueListenable: messagesBox.listenable(),
+        valueListenable: Hive.box<Message>('messages').listenable(),
         builder: (context, Box<Message> box, _) {
           if (box.isEmpty) {
             return const Center(child: Text("No messages"));
           }
 
-          // Keep only the latest message per sender
+          // Keep only the latest message per conversation
           Map<String, Message> latestMessages = {};
-
+          
           for (var msg in box.values) {
-            if (msg.sender.isNotEmpty || msg.sender != widget.userId) {
-              latestMessages[msg.sender] = msg;
+            // Get the other user's ID (either sender or recipient)
+            String otherId = msg.sender == widget.userId ? msg.recipient : msg.sender;
+            
+            // Only update if this is a more recent message
+            if (!latestMessages.containsKey(otherId) ||
+                DateTime.parse(msg.timestamp).isAfter(
+                  DateTime.parse(latestMessages[otherId]!.timestamp))) {
+              latestMessages[otherId] = msg;
             }
           }
 
-          // Convert to list and sort by timestamp (latest first)
+          // Convert to list and sort by timestamp
           List<Message> uniqueMessages = latestMessages.values.toList()
-            ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+            ..sort((a, b) => DateTime.parse(b.timestamp).compareTo(
+                  DateTime.parse(a.timestamp)));
 
           return ListView.builder(
             itemCount: uniqueMessages.length,
             itemBuilder: (context, index) {
               var message = uniqueMessages[index];
+              String displayName = message.sender == widget.userId 
+                  ? message.recipient 
+                  : message.senderName;
 
               return ListTile(
-                leading: const CircleAvatar(child: Icon(Icons.person)),
+                leading: CircleAvatar(
+                  child: Text(displayName[0].toUpperCase()),
+                ),
                 title: Text(
-                  message.sender,
+                  displayName,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
@@ -71,17 +81,24 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 trailing: Text(
-                  _formatTimestamp(message.timestamp),
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  DateTime.parse(message.timestamp)
+                      .toLocal()
+                      .toString()
+                      .substring(11, 16),
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
                 onTap: () {
+                  String chatUserId = message.sender == widget.userId 
+                      ? message.recipient 
+                      : message.sender;
+                      
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => ChatScreen(
-                        senderName: message.sender,
+                        senderName: displayName,
                         userId: widget.userId,
-                        senderId: message.sender,
+                        senderId: chatUserId,
                       ),
                     ),
                   );
@@ -92,20 +109,5 @@ class _MessagesScreenState extends State<MessagesScreen> {
         },
       ),
     );
-  }
-
-  String _formatTimestamp(dynamic timestamp) {
-    int parsedTimestamp;
-
-    if (timestamp is int) {
-      parsedTimestamp = timestamp;
-    } else if (timestamp is String) {
-      parsedTimestamp = int.tryParse(timestamp) ?? 0; // Safely convert
-    } else {
-      return "Invalid Time"; // Handle unexpected values
-    }
-
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(parsedTimestamp);
-    return "${date.hour}:${date.minute.toString().padLeft(2, '0')}"; // HH:MM format
   }
 }

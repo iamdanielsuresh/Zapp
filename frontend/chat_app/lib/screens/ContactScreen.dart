@@ -22,7 +22,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   Future<void> _getContacts() async {
+
     PermissionStatus permissionStatus = await Permission.contacts.request();
+    if (permissionStatus.isDenied) {
+      permissionStatus = await Permission.contacts.request();
+    }
+    if (permissionStatus.isPermanentlyDenied) {
+      openAppSettings();
+    }
 
     if (permissionStatus.isGranted) {
       Iterable<Contact> contactsList = await ContactsService.getContacts();
